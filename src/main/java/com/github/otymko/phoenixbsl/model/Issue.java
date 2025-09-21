@@ -13,6 +13,7 @@ public class Issue extends RecursiveTreeObject<Issue> {
   private String location = "";
   private int startLine = 0;
   private DiagnosticSeverity severity = DiagnosticSeverity.Hint;
+  private String href = "";
 
   @Override
   public String toString() {
