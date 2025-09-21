@@ -28,6 +28,7 @@ public class IssueHelper {
     issue.setStartLine(startLine);
     issue.setLocation(String.valueOf(startLine));
     issue.setSeverity(diagnostic.getSeverity());
+    issue.setHref(diagnostic.getCodeDescription().getHref());
     return issue;
   }
 

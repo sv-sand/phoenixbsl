@@ -17,16 +17,14 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableCell;
-import javafx.scene.control.TreeTableColumn;
 import javafx.scene.image.Image;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -35,6 +33,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.lsp4j.Diagnostic;
 import org.eclipse.lsp4j.DiagnosticSeverity;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -175,6 +179,45 @@ public class IssuesStage extends Stage {
       }
     });
 
+    tree.setContextMenu(createTreeContextMenu());
+  }
+
+  private ContextMenu createTreeContextMenu() {
+    MenuItem openStandardItem = new MenuItem("Открыть стандарт");
+    openStandardItem.setOnAction(this::openStandard);
+
+    MenuItem copyStandardItem = new MenuItem("Скопировать ссылку на стандарт");
+    copyStandardItem.setOnAction(this::copyStandardLink);
+
+    ContextMenu menu = new ContextMenu();
+    menu.getItems().addAll(openStandardItem, copyStandardItem);
+
+    return menu;
+  }
+
+  private void openStandard(ActionEvent event) {
+    String href = tree.getSelectionModel().getSelectedItem().getValue().getHref();
+    if (href.isEmpty()) {
+      LOGGER.error("Не удалось открыть ссылку на стандарт, ссылка пуста");
+      return;
+    }
+
+    try {
+      Desktop.getDesktop().browse(new URI(href));
+    } catch (IOException | URISyntaxException e) {
+      LOGGER.error(String.format("Не верная ссылка на стандарт: %s", href), e);
+    }
+  }
+
+  private void copyStandardLink(ActionEvent event) {
+    String href = tree.getSelectionModel().getSelectedItem().getValue().getHref();
+    if (href.isEmpty()) {
+      LOGGER.error("Не удалось скопировать ссылку на стандарт, ссылка пуста");
+      return;
+    }
+
+    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    clipboard.setContents(new StringSelection(href), null);
   }
 
   private void filterIssuesTree(String filter) {
