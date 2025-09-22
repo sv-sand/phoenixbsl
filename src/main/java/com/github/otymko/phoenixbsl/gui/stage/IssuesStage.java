@@ -183,10 +183,10 @@ public class IssuesStage extends Stage {
   }
 
   private ContextMenu createTreeContextMenu() {
-    MenuItem openStandardItem = new MenuItem("Открыть стандарт");
+    MenuItem openStandardItem = new MenuItem("Открыть диагностику");
     openStandardItem.setOnAction(this::openStandard);
 
-    MenuItem copyStandardItem = new MenuItem("Скопировать ссылку на стандарт");
+    MenuItem copyStandardItem = new MenuItem("Скопировать ссылку на диагностику");
     copyStandardItem.setOnAction(this::copyStandardLink);
 
     ContextMenu menu = new ContextMenu();
